@@ -1,6 +1,6 @@
 from collections import deque
 from Complex import Complex
-
+from Imaging import ImageCleaning
 import json
 time=0
 path = deque()
@@ -8,6 +8,8 @@ signal = []
 fourier = deque()
 
 def setup():
+    scan = ImageCleaning('fourier_image.jpg')
+    image(scan.img, 0,0)
     with open('drawing.txt') as json_file:
         data = json.load(json_file)
     global fourier    
@@ -50,12 +52,14 @@ def epiCycles(x,y,phi,series):
         y += r * sin(f * time + p + phi)        
         ellipse(prevx,prevy, r*2,r*2)        
         line(prevx,prevy,x,y)
-    pushMatrix();    
-    translate(x, y);
-    rotate(PI / 2);
-    fill(255)
-    triangle(0, 0, -5, 1.5,   -5, -1.5);
-    popMatrix();     
+        pushMatrix();    
+        translate(x, y);
+        rotate(atan2(y-prevy, x-prevx));
+        fill(255,50)
+        stroke(255,50)
+        triangle(0, 0, -5, 1.5,   -5, -1.5);
+        noFill()
+        popMatrix();     
     return PVector(x,y)
 
     
