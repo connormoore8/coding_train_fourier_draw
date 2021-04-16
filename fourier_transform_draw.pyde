@@ -2,15 +2,18 @@ from collections import deque
 from Complex import Complex
 from Imaging import ImageCleaning
 import json
+
+
 time=0
 path = deque()
 signal = []
 fourier = deque()
 
+
 def setup():
     global scan
     scan = ImageCleaning('fourier_image.jpg')
-    scan.brightscaling(127) 
+    scan.contourscaling() 
     with open('drawing.txt') as json_file:
         data = json.load(json_file)
     global fourier    
