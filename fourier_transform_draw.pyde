@@ -13,18 +13,20 @@ fourier = deque()
 
 def setup():
     global scan
+    global sobelX
+    global sobelY
     scan = ImageCleaning('fourier_image.jpg')
-    scan.convoulute(0, sobelX)
-    # scan.contourscaling() 
-    scan.brightscaling(127)
-    with open('drawing.txt') as json_file:
-        data = json.load(json_file)
-    global fourier    
-    for i in range(0,len(data['drawing']),5):
-        signal.append(Complex(data['drawing'][i]['x'], data['drawing'][i]['y']))
-    fourier = dft(signal)
-    fourier = sorted(fourier, key=lambda el: el['amplitude'],reverse=True)
-    size(1600, 1600) 
+    # scan.convoulute(0, sobelX)
+    scan.sobelscaling() 
+    # scan.brightscaling(127)
+    # with open('drawing.txt') as json_file:
+    #     data = json.load(json_file)
+    # global fourier    
+    # for i in range(0,len(data['drawing']),5):
+    #     signal.append(Complex(data['drawing'][i]['x'], data['drawing'][i]['y']))
+    # fourier = dft(signal)
+    # fourier = sorted(fourier, key=lambda el: el['amplitude'],reverse=True)
+    size(800, 800) 
 
 def dft(x):
     result = [] 
@@ -76,16 +78,16 @@ def draw():
     background(0)
        
     image(scan.img, 0,0, width, height)
-    stroke(255,100)
-    v = epiCycles(width/2,height/2, 0, fourier)
-    path.appendleft(v)
-    stroke(255)   
-    beginShape();    
-    noFill();
-    for i in range(len(path)):
-        vertex(path[i].x, path[i].y)  
-    endShape();    
-    if time >= TWO_PI:
-        path.pop()
-    dt = TWO_PI / len(fourier)
-    time += dt
+    # stroke(255,100)
+    # v = epiCycles(width/2,height/2, 0, fourier)
+    # path.appendleft(v)
+    # stroke(255)   
+    # beginShape();    
+    # noFill();
+    # for i in range(len(path)):
+    #     vertex(path[i].x, path[i].y)  
+    # endShape();    
+    # if time >= TWO_PI:
+    #     path.pop()
+    # dt = TWO_PI / len(fourier)
+    # time += dt
