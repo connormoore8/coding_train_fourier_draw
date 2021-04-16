@@ -10,6 +10,7 @@ fourier = deque()
 def setup():
     global scan
     scan = ImageCleaning('fourier_image.jpg')
+    scan.brightscaling(127) 
     with open('drawing.txt') as json_file:
         data = json.load(json_file)
     global fourier    
@@ -67,8 +68,8 @@ def draw():
     global time
     global wave
     background(0)
-    # scan.brightscaling(127)    
-    image(scan.img, 0,0)
+       
+    image(scan.img, 0,0, width, height)
     stroke(255,100)
     v = epiCycles(width/2,height/2, 0, fourier)
     path.appendleft(v)
