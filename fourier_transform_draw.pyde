@@ -3,7 +3,8 @@ from Complex import Complex
 from Imaging import ImageCleaning
 import json
 
-
+sobelX = [[-1, 0, 1],[-2, 0, 2],[-1, 0, 1]]
+sobelY= [[-1, -2, -1], [0, 0, 0],[1, 2, 1]]
 time=0
 path = deque()
 signal = []
@@ -13,7 +14,9 @@ fourier = deque()
 def setup():
     global scan
     scan = ImageCleaning('fourier_image.jpg')
-    scan.contourscaling() 
+    scan.convoulute(0, sobelX)
+    # scan.contourscaling() 
+    scan.brightscaling(127)
     with open('drawing.txt') as json_file:
         data = json.load(json_file)
     global fourier    
@@ -21,7 +24,7 @@ def setup():
         signal.append(Complex(data['drawing'][i]['x'], data['drawing'][i]['y']))
     fourier = dft(signal)
     fourier = sorted(fourier, key=lambda el: el['amplitude'],reverse=True)
-    size(800, 800) 
+    size(1600, 1600) 
 
 def dft(x):
     result = [] 

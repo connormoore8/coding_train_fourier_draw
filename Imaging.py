@@ -1,3 +1,5 @@
+
+
 class ImageCleaning:
     
     def __init__(self,address):
@@ -12,7 +14,7 @@ class ImageCleaning:
             for y in range(self.img.height):
                 index = x + y*self.img.width
                 # print(brightness(self.img.pixels[index]))
-                result.pixels[index] = self.bright(self, index)
+                result.pixels[index] = self.bright(index,thresh)
         result.updatePixels()
         self.img = result
         
@@ -23,21 +25,34 @@ class ImageCleaning:
         for x in range(self.img.width):
             for y in range(self.img.height):
                 index = x + y*self.img.width
-                leftIndex = (x-1) + y*self.img.width
-                result.pixels[index] = self.contour_differential(leftIndex, index)
+                result.pixels[index] = self.contour_differential(index)
         result.updatePixels()
         self.img = result
         
-    def contour_differential(self, Index1, Index2):
-        return abs(brightness(self.img.pixels[Index1]) - brightness(self.img.pixels[Index2]))
+    def contour_differential(self, index1):
+        return abs(brightness(self.img.pixels[index1-1]) - brightness(self.img.pixels[index1]))*1.1
               
         
-    def bright(self, index):
+    def bright(self, index, thresh):
         # print(brightness(self.img.pixels[index]))
-        if (brightness(self.img.pixels[index]) > 127):
+        if (brightness(self.img.pixels[index]) > thresh):
             return color(0) # Black
         else:
-            return color(255)   # White
+            return color(255)# White
         
     
-    
+    def convoulute(self, index, matrix):
+        rval = 0.0
+        gval = 0.0
+        bval = 0.0
+        for x in range(len(matrix)):
+            for y in range(len(matrix)):
+                loc = (x-1) + index + (y-1) * self.img.width 
+                loc = constrain(loc, 0, len(self.img.pixels)-1)
+                rval += (red(self.img.pixels[loc]) * matrix[x][y])
+                gval += (green(self.img.pixels[loc]) * matrix[x][y])
+                bval += (blue(self.img.pixels[loc]) * matrix[x][y])
+        rval = constrain(rval, 0, 255)
+        gval = constrain(gval, 0, 255)
+        bval = constrain(bval, 0, 255)
+        return color(rval, gval, bval)
