@@ -15,10 +15,12 @@ def setup():
     global scan
     global sobelX
     global sobelY
-    scan = ImageCleaning('fourier_image.jpg')
-    # scan.convoulute(0, sobelX)
+    scan = ImageCleaning('orange.jpg')
+    print("Created Image Object")
+    scan.flatscaling()
+    print("Flattened")
     scan.sobelscaling() 
-    # scan.brightscaling(127)
+    print("Sobel Edge Detection")
     # with open('drawing.txt') as json_file:
     #     data = json.load(json_file)
     # global fourier    
@@ -26,7 +28,7 @@ def setup():
     #     signal.append(Complex(data['drawing'][i]['x'], data['drawing'][i]['y']))
     # fourier = dft(signal)
     # fourier = sorted(fourier, key=lambda el: el['amplitude'],reverse=True)
-    size(800, 800) 
+    size(400, 400) 
 
 def dft(x):
     result = [] 
@@ -75,7 +77,7 @@ def epiCycles(x,y,phi,series):
 def draw():
     global time
     global wave
-    background(0)
+    background(255)
        
     image(scan.img, 0,0, width, height)
     # stroke(255,100)
