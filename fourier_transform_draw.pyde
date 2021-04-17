@@ -15,7 +15,7 @@ def setup():
     global scan
     global sobelX
     global sobelY
-    scan = ImageCleaning('orange.jpg')
+    scan = ImageCleaning('butterfly.jpg')
     print("Created Image Object")
     scan.flatscaling()
     print("Flattened")

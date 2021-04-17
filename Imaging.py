@@ -1,6 +1,6 @@
 sobelX = [[-1, 0, 1],[-2, 0, 2],[-1, 0, 1]]
 sobelY= [[-1, -2, -1], [0, 0, 0],[1, 2, 1]]
-flat = [[1,1,1,1,1] for x in range(5)] 
+flat = [[1,1,1] for x in range(3)] 
 class ImageCleaning:
     
     def __init__(self,address):
@@ -106,5 +106,5 @@ class ImageCleaning:
         rval = constrain(rval, 0, 255)
         gval = constrain(gval, 0, 255)
         bval = constrain(bval, 0, 255)
-        return color(rval/25, gval/25, bval/25)
+        return color(rval/9, gval/9, bval/9)
     
