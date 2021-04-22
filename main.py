@@ -8,23 +8,12 @@ from Complex import Complex
 # from Imaging import ImageCleaning
 import json
 
-def setup():
-    path = deque()
-    signal = []
-    with open('drawing.txt') as json_file:
-        data = json.load(json_file)
-    global fourier
-    global lines
-    global circles
-    for i in range(0, len(data['drawing']), 10):
-        signal.append(Complex(data['drawing'][i]['x'], data['drawing'][i]['y']))
-    fourier = dft(signal)
-    fourier = sorted(fourier, key=lambda el: el['amplitude'], reverse=True)
-    plt.style.use('dark_background')
-    lines = [plt.plot([],[], color= 'y', linewidth= 1)[0] for x in range(len(fourier))]
-    # circles = [plt.Circle((0,0), 15, fill=False, ec='y')[0] for x in range(len(fourier))]
-    #setup screen and list of lines and circles.
-    return lines
+# def setup():
+#     path = deque()
+#
+#     # circles = [plt.Circle((0,0), 15, fill=False, ec='y')[0] for x in range(len(fourier))]
+#     #setup screen and list of lines and circles.
+#     return tuple(lines)
 
 def dft(x):
     result = []
@@ -67,7 +56,7 @@ def epicycles(lines, circles, time, x, y, phi, series):
         # set line between two spots.
         # app.line(prevx, prevy, x, y)
         i += 1
-        if i > 3: return {'x': x, 'y': y}
+        # if i > 3: return {'x': x, 'y': y}
     return {'x': x, 'y': y}
 
 
@@ -75,8 +64,26 @@ def draw(time):
     #TODO: reset it update in the animation function.
     # global wave
     # app.image(scan.img, 0, 0, app.width, app.height)
-    v = epicycles(lines, circles, time, 0,  0, 0, fourier)
-
+    #print(fourier)
+    # epicycles(lines, circles, time, 0, 0, 0, fourier)
+    x = 0
+    y = 0
+    phi = 0
+    i = 0
+    for term in fourier:
+        # print(lines[0])
+        prevx = x
+        prevy = y
+        f = term['frequency']
+        p = term['phase']
+        r = 0.15 * term['amplitude']
+        x += r * np.cos(f * time + p + phi)
+        y += r * np.sin(f * time + p + phi)
+        # TODO add circles and line.f
+        # set circle where previouse value is.
+        # app.ellipse(prevx, prevy, r * 2, r * 2)
+        lines[i].set_data([prevx, x], [prevy, y])
+        # print(lines[i])
     # path.appendleft(v)
     # app.stroke(255)
     # app.beginShape()
@@ -95,10 +102,23 @@ def draw(time):
 def main():
     fig = plt.figure(figsize=(10, 10))
     ax = plt.axes(xlim=(-50, 50), ylim=(-50, 50))
+    signal = []
+    with open('drawing.txt') as json_file:
+        data = json.load(json_file)
+    global fourier
+    global lines
+    global circles
+    for i in range(0, len(data['drawing']), 5):
+        signal.append(Complex(data['drawing'][i]['x'], data['drawing'][i]['y']))
+    fourier = dft(signal)
+    fourier = sorted(fourier, key=lambda el: el['amplitude'], reverse=True)
+    lines = [ax.plot([], [], color='black', linewidth=2)[0] for x in range(len(fourier))]
+    print('lines created')
+    plt.style.use('dark_background')
+    print('background loaded')
     anim = animation.FuncAnimation(fig, draw,
-                                   init_func=setup,
-                                   frames=360,
-                                   interval=20,
+                                   frames=np.linspace(0,2*np.pi, len(fourier)),
+                                   interval=40,
                                    blit=True)
 
     plt.show()
