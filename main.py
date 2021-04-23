@@ -2,81 +2,58 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-# from collections import deque
 import math
 from Complex import Complex
-# from Imaging import ImageCleaning
 import json
-
+fourier = []
 fig = plt.figure(figsize=(10, 10))
 ax = plt.axes(xlim=(-50, 50), ylim=(-50, 50))
 lines = []
+circles = []
+patches = lines + list(circles)
 
 
 def setup():
-    for term in fourier:
-        lines.append(ax.plot([], [], color='black', lw=2)[0])
+    for i in range(len(fourier)):
+        lines.append(ax.plot([], [], color='y', lw=2)[0])
+        circles.append(plt.Circle((0, 0), 5, fill=False, ec='y'))
     # circles = [plt.Circle((0,0), 15, fill=False, ec='y')[0] for x in range(len(fourier))]
     # setup screen and list of lines and circles.
-    return lines
+    return patches
+
 
 def dft(x):
     result = []
     N = len(x)
     for k in range(N):
         # calculate terms of dft
-        sum = Complex(0, 0)
+        term = Complex(0, 0)
         for n in range(N):
             phi = (k * n * 2 * np.pi) / N
             c = Complex(np.cos(phi), -np.sin(phi))
-            sum.plus(x[n].times(c))
-        sum.re = sum.re / N
-        sum.im = sum.im / N
+            term.plus(x[n].times(c))
+        term.re = term.re / N
+        term.im = term.im / N
         freq = k
-        amp = math.sqrt((sum.re * sum.re + sum.im * sum.im))
-        phase = math.atan2(sum.im, sum.re)
-        result.append({'real': sum.re,
-                       'complex': sum.im,
+        amp = math.sqrt((term.re * term.re + term.im * term.im))
+        phase = math.atan2(term.im, term.re)
+        result.append({'real': term.re,
+                       'complex': term.im,
                        'frequency': freq,
                        'amplitude': amp,
                        'phase': phase})
     return result
 
 
-def epicycles(lines, circles, time, x, y, phi, series):
-    #TODO: untangle for update function in animation.
-    i = 0
-    for term in series:
-        prevx = x
-        prevy = y
-        f = term['frequency']
-        p = term['phase']
-        r = 1 * term['amplitude']
-        x += r * np.cos(f * time + p + phi)
-        y += r * np.sin(f * time + p + phi)
-        #TODO add circles and line.f
-        # set circle where previouse value is.
-        # app.ellipse(prevx, prevy, r * 2, r * 2)
-        lines[i].set_data([0, x],[0, y])
-        # set line between two spots.
-        # app.line(prevx, prevy, x, y)
-        i += 1
-        # if i > 3: return {'x': x, 'y': y}
-    return {'x': x, 'y': y}
-
-
 def draw(time):
-    #TODO: reset it update in the animation function.
+    # TODO: reset it update in the animation function.
     # global wave
     # app.image(scan.img, 0, 0, app.width, app.height)
-    #print(fourier)
-    # epicycles(lines, circles, time, 0, 0, 0, fourier)
     x = 0
     y = 0
     phi = 0
     i = 0
     for term in fourier:
-        # print(lines[0])
         prev_x = x
         prev_y = y
         f = term['frequency']
@@ -85,25 +62,14 @@ def draw(time):
         x += r * np.cos(f * time + p + phi)
         y += r * np.sin(f * time + p + phi)
         # TODO add circles and line.f
-        # set circle where previouse value is.
-        # app.ellipse(prevx, prevy, r * 2, r * 2)
+        # set circle where previous value is.
+        # app.ellipse(prev_x, prev_y, r * 2, r * 2)
         lines[i].set_data([prev_x, x], [prev_y, y])
-        i+=1
-        # print(lines[i])
-    # path.appendleft(v)
-    # app.stroke(255)
-    # app.beginShape()
-    # app.noFill()
+        circles[i].set_radius(r)
+        circles[i].center = (prev_x, prev_y)
+        i += 1
+    return patches
 
-
-    # for i in range(len(path)):
-    #     vertex(path[i].x, path[i].y)
-    # endShape();
-    # if time >= TWO_PI:
-    #     path.pop()
-    # dt = TWO_PI / len(fourier)
-    # time += dt
-    return lines
 
 def main():
     global fourier
@@ -114,16 +80,19 @@ def main():
         signal.append(Complex(data['drawing'][i]['x'], data['drawing'][i]['y']))
     fourier = dft(signal)
     fourier = sorted(fourier, key=lambda el: el['amplitude'], reverse=True)
-    # print('lines created')
-    # plt.style.use('dark_background')
-    # print('background loaded')
-    anim = animation.FuncAnimation(fig, draw, init_func = setup,
-                                   frames=np.linspace(0,2*np.pi, len(fourier)),
+    print(len(fourier))
+    plt.style.use('dark_background')
+    print('background loaded')
+    anim = animation.FuncAnimation(fig, draw,
+                                   init_func=setup,
+                                   frames=np.linspace(0, 2*np.pi, len(fourier)),
                                    interval=20,
-                                   blit=True)
-
+                                   blit=True,
+                                   repeat=False)
+    print('generating gif')
     writer = animation.PillowWriter(fps=25)
-    anim.save('lines.gif', writer = writer)
+    anim.save('lines.gif', writer=writer)
+    print('completed gif')
     plt.show()
 
 
