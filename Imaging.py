@@ -1,10 +1,15 @@
+from PIL import ImageOps, Image
+import cv2
+import numpy as np
+
 sobelX = [[-1, 0, 1],[-2, 0, 2],[-1, 0, 1]]
 sobelY= [[-1, -2, -1], [0, 0, 0],[1, 2, 1]]
-flat = [[1,1,1] for x in range(3)] 
+flat = [[1,1,1] for x in range(3)]
+
 class ImageCleaning:
     
     def __init__(self,address):
-        self.img = loadImage(address)
+        self.img = Image.open(address)
         self.sX = [[-1, 0, 1] , [-2, 0, 2] , [-1, 0, 1]]
         self.sY = [[-1, -2, -1] , [0, 0, 0] , [1, 2, 1]]
         self.flat = flat

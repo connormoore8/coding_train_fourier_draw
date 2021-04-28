@@ -71,7 +71,7 @@ def draw(time):
     return patches
 
 
-def main():
+if __name__ is '__main__':
     global fourier
     global ax
     global lines
@@ -106,5 +106,3 @@ def main():
     print('completed gif')
     plt.show()
 
-
-main()
